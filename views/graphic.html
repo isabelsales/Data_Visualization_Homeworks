@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+
+<style type="text/css">
+body {
+  background-color: #BDBDBD;
+  height: auto;
+  color: #424242;
+}
+/*Colors and align for header*/
+h1 {
+  background-color: #848484;
+  font-weight: bold;
+  text-align: center;
+  color: #E6E6E6;
+}
+
+p {
+  font-size: 18px;
+  text-align: center;
+}
+
+/* CSS that makes chart responsive */
+#all{
+  max-width: 100%;
+  text-align:center;
+  width: 70%;
+  height: 100%;
+  margin: 0 auto;
+   background-color: #F2F2F2;
+}
+
+#chart {
+  max-width: 100%;
+  text-align:center;
+  width: 70%;
+  margin: 0 auto;
+}
+#svg-container {
+	border-color:white;
+    position: relative;
+    width: 80%;
+    overflow: hidden;
+}
+.svg-content-responsive {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+rect {
+  fill: steelblue;
+}
+rect:hover {
+  fill: #819FF7;
+}
+.axis text {
+  font: 14px sans-serif;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+}
+  .g-hed {
+  	padding-top: 20px;
+  	text-align: center;
+  	text-transform: uppercase;
+  	font-weight: bold;
+  	font-size:22px; 
+  	margin: 3px 0;
+  }
+    .g-intro {
+    font-size: 16px;
+    margin: 0px 0px 10px 0px;
+  }
+  .btn {
+  width: 100px;
+  height: 45px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  }
+
+.btn:hover {
+  background-color: #819FF7;
+      box-shadow: 0px 15px 20px rgba(44, 44, 44, 1.0);
+  color: #fff;
+  transform: translateY(-7px);
+}
+
+.cd-popup {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(94, 110, 141, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: opacity 0.3s 0s, visibility 0s 0.3s;
+  -moz-transition: opacity 0.3s 0s, visibility 0s 0.3s;
+  transition: opacity 0.3s 0s, visibility 0s 0.3s;
+}
+.cd-popup.is-visible {
+  opacity: 1;
+  visibility: visible;
+  -webkit-transition: opacity 0.3s 0s, visibility 0s 0s;
+  -moz-transition: opacity 0.3s 0s, visibility 0s 0s;
+  transition: opacity 0.3s 0s, visibility 0s 0s;
+}
+
+.cd-popup-container {
+  position: relative;
+  padding-top: 10px;
+  width: 90%;
+  max-width: 400px;
+  margin: 4em auto;
+  background: #FFF;
+  border-radius: .25em .25em .4em .4em;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  -webkit-transform: translateY(-40px);
+  -moz-transform: translateY(-40px);
+  -ms-transform: translateY(-40px);
+  -o-transform: translateY(-40px);
+  transform: translateY(-40px);
+  /* Force Hardware Acceleration in WebKit */
+  -webkit-backface-visibility: hidden;
+  -webkit-transition-property: -webkit-transform;
+  -moz-transition-property: -moz-transform;
+  transition-property: transform;
+  -webkit-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+}
+.cd-popup-container p {
+  padding: 3em 1em;
+}
+.cd-popup-container .cd-buttons:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.cd-popup-container .cd-buttons li {
+  float: left;
+  width: 50%;
+  list-style: none;
+}
+.cd-popup-container .cd-buttons a {
+  display: block;
+  height: 60px;
+  line-height: 60px;
+  text-transform: uppercase;
+  color: #FFF;
+  -webkit-transition: background-color 0.2s;
+  -moz-transition: background-color 0.2s;
+  transition: background-color 0.2s;
+}
+.cd-popup-container .cd-buttons li:first-child a {
+  background: #fc7169;
+  border-radius: 0 0 0 .25em;
+}
+.no-touch .cd-popup-container .cd-buttons li:first-child a:hover {
+  background-color: #fc8982;
+}
+.cd-popup-container .cd-buttons li:last-child a {
+  background: #b6bece;
+  border-radius: 0 0 .25em 0;
+}
+.no-touch .cd-popup-container .cd-buttons li:last-child a:hover {
+  background-color: #c5ccd8;
+}
+.cd-popup-container .cd-popup-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+}
+.cd-popup-container .cd-popup-close::before, .cd-popup-container .cd-popup-close::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  width: 14px;
+  height: 3px;
+  background-color: #8f9cb5;
+}
+.cd-popup-container .cd-popup-close::before {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+  left: 8px;
+}
+.cd-popup-container .cd-popup-close::after {
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  right: 8px;
+}
+.is-visible .cd-popup-container {
+  -webkit-transform: translateY(0);
+  -moz-transform: translateY(0);
+  -ms-transform: translateY(0);
+  -o-transform: translateY(0);
+  transform: translateY(0);
+}
+@media only screen and (min-width: 1170px) {
+  .cd-popup-container {
+    margin: 8em auto;
+  }
+}
+a:link 
+{ 
+text-decoration:none; 
+} 
+h5{
+  font-weight: bold;
+  text-align: center;
+}
+.loading{
+  height: 100%;
+}
+.loading{
+  width: 100%;
+  padding-top: 200px;
+  margin: 0;
+  display: table;
+}
+.loading .cell{
+  display:table-cell;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+  margin: 0;
+}
+.loading .loading-anime{
+  box-sizing: border-box;
+  background-color: #819FF7;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  -webkit-box-shadow: 1px 0px 5px 0px rgba(34,34,34,0.3);
+  -moz-box-shadow: 1px 0px 5px 0px rgba(34,34,34,0.3);
+  box-shadow: 0px 0px 3px 1px rgba(34,34,34,0.3);
+  display:inline-block;
+  position:relative;
+  animation: load 1.5s linear 0s infinite;
+}
+#loading-1{
+  animation: load 2s linear 0s infinite;
+  margin-right: 20px;
+}
+#loading-2{
+  animation: load 1s linear 0s infinite;
+  margin-left: 20px;
+}
+@keyframes load{
+  0%{
+    top: 0px;
+    background-color: #0101DF;
+  }
+  25%{
+    top: -50px;
+    background-color: #5882FA;
+  }
+  50%{
+    top: 0px;
+    background-color: #4d85ea;
+  }
+  75%{
+    top: 50px;
+    background-color: #1f66e5;
+  }
+  100%{
+    top: 0px;
+    background-color: #008080;
+  }
+}
+
+.main{
+  background-color: #eee;
+  width: 80%;
+  -webkit-box-shadow: 1px 0px 5px 0px rgba(34,34,34,0.3);
+  -moz-box-shadow: 1px 0px 5px 0px rgba(34,34,34,0.3);
+  box-shadow: 1px 0px 5px 0px rgba(34,34,34,0.3);
+  padding-right:0;
+  padding-left:0;
+  display: none;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+#all{
+	display:none;
+}
+</style>
+
+<body>
+<h1>D3.js Responsive Bar Chart Example</h1>
+<div class="container-fluid loading">
+    <div class="cell">
+        <div class="loading-anime" id="loading-1">
+          
+        </div>
+        <div class="loading-anime">
+          
+        </div>
+        <div class="loading-anime" id="loading-2">
+          
+        </div>
+      </div>
+  </div>
+	<div id="all">
+	<h5 class="g-hed">SmartPhone Sales in Brazil</h5>
+  <p class="g-intro">International Data Corporation - IDC</p>
+  <button class="btn" id='btnHome'>HOME</button>
+  <button class="btn" id="btn">UPDATE</button>
+<div id="chart">
+</div>
+</div>
+  <div class="cd-popup" role="alert">
+	<div class="cd-popup-container">
+		<h2>Update Sales Data</h2>
+			<label>2013: </label>
+			<input type='text' size='10' value='0' id="ano13" onkeypress='return SomenteNumero(event)'>
+			<br/>
+			<br/>
+			<label>2014: </label>
+			<input type='text' size='10' value='0' id="ano14" onkeypress='return SomenteNumero(event)'>
+			<br/>
+			<br/>
+			<label>2015: </label>
+			<input type='text' size='10' value='0' id="ano15" onkeypress='return SomenteNumero(event)'>
+			<br/>
+			<br/>
+			<label>2016: </label>
+			<input type='text' size='10' value='0' id="ano16" onkeypress='return SomenteNumero(event)'>
+			<br/>
+			<br/>
+			<label>2017: </label>
+			<input type='text' size='10' value='0' id="ano17" onkeypress='return SomenteNumero(event)'>
+			<br/>
+			<br/>
+			<label>2018: </label>
+			<input type='text' size='10' value='0' id="ano18" onkeypress='return SomenteNumero(event)'>
+		<ul class="cd-buttons">
+			<li><a id="cancel" href="#">Cancel</a></li>
+			<li><a id="confirm" href="#">Confirm</a></li>
+		</ul>
+	</div> 
+	</div>
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+   $(window).on("load", function(){
+     $(".loading").fadeOut("slow", function(){
+       $(".loading").css("display", "none");
+       $(".main").fadeIn();
+       $("#all").css("display", "block");
+     });
+     
+   });
+function SomenteNumero(e){
+    var tecla=(window.event)?event.keyCode:e.which;   
+    if((tecla>47 && tecla<58)) return true;
+    else{
+    	if (tecla==8 || tecla==0) return true;
+	else  return false;
+    }
+}
+	$('#btnHome').on('click', function(event){
+		event.preventDefault();
+		window.location.href = "/Homeworks/index.html";
+	});
+	$('#btn').on('click', function(event){
+		event.preventDefault();
+		$('.cd-popup').addClass('is-visible');
+	});
+	$('#cancel').on('click', function(event){
+		event.preventDefault();
+		$('.cd-popup').removeClass('is-visible');
+	});
+	$('#confirm').on('click', function(event){
+		event.preventDefault();
+		$('.cd-popup').removeClass('is-visible');
+		var ano13 = $('#ano13').val();
+		if(ano13 == null){
+			ano13 = 0;
+		}
+		var ano14 = $('#ano14').val();
+		if(ano14 == null){
+			ano14 = 0;
+		}
+		var ano15 = $('#ano15').val();
+		if(ano15 == null){
+			ano15 = 0;
+		}		
+		var ano16 = $('#ano16').val();
+		if(ano16 == null){
+			ano16 = 0;
+		}
+		var ano17 = $('#ano17').val();
+		if(ano17 == null){
+			ano17 = 0;
+		}		
+		var ano18 = $('#ano18').val();
+		if(ano18 == null){
+			ano18 = 0;
+		}		
+		var numbers = [ano13, ano14, ano15, ano16, ano17, ano18]
+		$('#chart').html("");
+	$('#chart').html(chart(numbers));
+	});
+
+function chart(numbers){
+	function getRatio (side) {
+  return ((margin[side] / width) * 100) + '%'
+}
+
+var letters = ['2013','2014','2015', '2016', '2017', '2018']
+
+var margin = { left: 100, top: 50, right: 10, bottom: 50 }
+var width = 700
+var height = 400
+
+var marginRatio = {
+  left: getRatio('left'),
+  top: getRatio('top'),
+  right: getRatio('right'),
+  bottom: getRatio('bottom')
+}
+var barWidth = width / numbers.length
+
+var svg = d3.select('div#chart')
+
+    .append('div')
+    .attr('id', 'svg-container')
+    .append('svg')
+    .style('padding', marginRatio.top + ' ' + marginRatio.right + ' ' + marginRatio.bottom + ' ' + marginRatio.left)
+    .attr('preserveAspectRatio', 'xMinYMin meet')
+    .attr('viewBox', '0 0 ' + (width + margin.left + margin.right) + ' ' + (height + margin.top + margin.bottom))
+    // Id to target with CSS
+    .attr('id', 'svg-content-responsive')
+var x = d3.scale.ordinal()
+    .domain(letters)
+    .rangeRoundBands([0, width], 0.1, 0.1)
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient('bottom')
+
+var y = d3.scale.linear()
+    .domain([d3.max(numbers), 0])
+    .range([0, height])
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient('left')
+
+
+var bar = svg.selectAll('g')
+    .data(numbers)
+    .enter()
+    .append('g')
+    .attr('transform', function (d, i) { return 'translate(' + i * barWidth + ', 0)' })
+
+svg.append('g')
+    .attr('class', 'x axis')
+    .call(xAxis)
+    .attr('transform', 'translate(0,' + height + ')')
+
+svg.append('g')
+    .attr('class', 'y axis')
+    .call(yAxis)
+
+bar.append('rect')
+    .attr('class', 'bar')
+    .attr('width', barWidth - 1)
+    .attr('y', function (d) { return y(d) })
+    .attr('height', function (d) { return height - y(d) })
+}
+
+var numbers = [4000000, 5000000, 2000000, 6000000, 3000000, 2000000]
+
+chart(numbers);
+</script>
